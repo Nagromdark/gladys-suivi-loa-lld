@@ -88,16 +88,20 @@ LOG_LEVEL=debug npm start
 2. Décrire les changements sous `## [Unreleased]` dans
    [`CHANGELOG.md`](CHANGELOG.md), puis **Actions → Release → Run workflow**
    (`patch`, `minor` ou `major`) : le workflow met à jour la version partout,
-   pousse le tag, construit l'image `ghcr.io/nagromdark/gladys-loa`
-   (amd64 + arm64) et publie la release GitHub.
-3. Rendre public le paquet ghcr.io (Packages → gladys-loa → Package
-   settings), sinon Gladys ne pourra pas télécharger l'image.
+   pousse le tag, construit l'image `ghcr.io/nagromdark/gladys-suivi-loa-lld`
+   (amd64 + arm64 ; le nom vient du dépôt) et publie la release GitHub.
+3. Rendre public le paquet ghcr.io (Packages → gladys-suivi-loa-lld →
+   Package settings), sinon Gladys ne pourra pas télécharger l'image.
 4. L'indexeur du store détecte la nouvelle version : l'intégration
    s'installe en un clic depuis Gladys.
 
 Pour tester avant publication : **Actions → Build and publish image → Run
 workflow** sur une branche, puis coller le manifest affiché dans le résumé du
 build dans **Intégrations → Installer une intégration → Mode développeur**.
+Rien n'apparaît dans le store tant que le dépôt n'a pas le topic et de
+release. Si le paquet ghcr.io est encore privé, connecter d'abord le Docker de
+la machine Gladys au registre (`docker login ghcr.io`, avec un token GitHub
+limité à `read:packages`).
 
 ## Licence
 

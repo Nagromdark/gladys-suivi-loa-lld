@@ -20,4 +20,4 @@ the notes of the version's GitHub Release.
 - `get_summary` scene action and `show_summary` button: the lease figures and a
   ready-made sentence, in French or English.
 
-[Unreleased]: https://github.com/Nagromdark/gladys-loa/commits/HEAD
+[Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/commits/HEAD
