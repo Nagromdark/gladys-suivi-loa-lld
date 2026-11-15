@@ -125,6 +125,32 @@ test('the widget content is valid, before and after a reading', async (t) => {
   assert.equal(button.action.fields[0].default, 25010);
 });
 
+test('the widget chart draws the allowance and the pace over the whole contract', async (t) => {
+  const { gladys } = await setup(t);
+  const chartOf = async () => {
+    const ack = await gladys.fake.widgetGet('lease_status', { settings: {}, language: 'fr' });
+    return ack.data.content.components.find((c) => c.type === 'chart');
+  };
+  // Without a reading: only the allowance line.
+  assert.deepEqual((await chartOf()).series, [
+    {
+      name: { en: 'Allowance', fr: 'Forfait' },
+      points: [
+        { t: '2025-01-01T00:00:00.000Z', v: 10 },
+        { t: '2028-01-01T00:00:00.000Z', v: 60010 },
+      ],
+    },
+  ]);
+  await gladys.fake.action('record_reading', { km: 25010 });
+  const [, pace] = (await chartOf()).series;
+  // 25 000 km in 365 of 1095 days -> 75 000 km driven at the end.
+  assert.deepEqual(pace.points, [
+    { t: '2025-01-01T00:00:00.000Z', v: 10 },
+    { t: NOW.toISOString(), v: 25010 },
+    { t: '2028-01-01T00:00:00.000Z', v: 75010 },
+  ]);
+});
+
 test('the widget content stays valid while the contract is not configured', async (t) => {
   const { gladys } = await setup(t, {});
   const ack = await gladys.fake.widgetGet('lease_status', { settings: {}, language: 'fr' });

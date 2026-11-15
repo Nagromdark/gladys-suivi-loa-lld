@@ -19,5 +19,7 @@ the notes of the version's GitHub Release.
   dashboard widget and the `record_reading` scene action.
 - `get_summary` scene action and `show_summary` button: the lease figures and a
   ready-made sentence, in French or English.
+- Chart in the `lease_status` widget: the allowance line over the whole
+  contract and your own pace, extended to the projected final odometer.
 
 [Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/commits/HEAD

@@ -51,7 +51,10 @@ Three ways:
 - **Configuration screen**: the **Record the odometer** button. The summary
   shows under the button.
 - **Dashboard**: add the **Car lease** widget; its **New reading** button
-  opens a small form, pre-filled with the last reading.
+  opens a small form, pre-filled with the last reading. Its chart draws the
+  allowance over the whole contract and your own pace, extended to the
+  projected final odometer: when your line runs above the allowance line, you
+  are driving too much.
 - **Scene**: the **Record the leased car odometer** action. Handy when your
   car is connected and another Gladys integration already reads its
   odometer: a daily scene can pass that value on.

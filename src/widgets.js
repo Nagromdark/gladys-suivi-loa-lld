@@ -82,7 +82,12 @@ function statusItems(lease, language) {
   items.push({
     label: { en: 'Contract end', fr: 'Fin du contrat' },
     icon: 'flag',
-    value: formatDate(lease.end, language),
+    // The days left ride with the end date: the core keeps 8 components, and
+    // their tile gave its slot to the chart.
+    value: {
+      en: `${formatDate(lease.end, 'en')} (${lease.daysRemaining} d)`,
+      fr: `${formatDate(lease.end, 'fr')} (${lease.daysRemaining} j)`,
+    },
     color: WIDGET_COLORS.NEUTRAL,
   });
   items.push({
@@ -94,6 +99,40 @@ function statusItems(lease, language) {
     color: lease.reading ? WIDGET_COLORS.NEUTRAL : WIDGET_COLORS.WARNING,
   });
   return items;
+}
+
+// The contract on one chart: the allowance spread evenly from the delivery to
+// the end, and the car's own line (delivery -> last reading -> projected end).
+// Inline points rather than the features' history: the chart must span the
+// whole contract, future included, and the core's intervals stop at one year.
+function leaseChart(config, lease) {
+  const point = (date, km) => ({ t: date.toISOString(), v: Math.round(km) });
+  const series = [
+    {
+      name: { en: 'Allowance', fr: 'Forfait' },
+      points: [
+        point(lease.start, config.start_km),
+        point(lease.end, config.start_km + config.allowance_km),
+      ],
+    },
+  ];
+  // A reading on the delivery day would draw a vertical segment: no car line.
+  if (lease.reading && lease.reading.at > lease.start) {
+    const points = [point(lease.start, config.start_km), point(lease.reading.at, lease.odometer)];
+    // A reading taken after the end already is the final mileage.
+    if (lease.projectedEndOdometer !== null && lease.reading.at < lease.end) {
+      points.push(point(lease.end, lease.projectedEndOdometer));
+    }
+    series.push({ name: { en: 'Your pace', fr: 'Votre rythme' }, points });
+  }
+  return {
+    type: 'chart',
+    chart_type: 'line',
+    title: { en: 'Odometer vs allowance', fr: 'Compteur et forfait' },
+    unit: 'km',
+    series,
+    now_marker: true,
+  };
 }
 
 export function buildWidgetContent(gladys, service, { language } = {}) {
@@ -119,7 +158,6 @@ export function buildWidgetContent(gladys, service, { language } = {}) {
     live(FEATURE.ODOMETER, { en: 'Odometer', fr: 'Compteur' }, 'activity'),
     live(FEATURE.KM_DELTA, { en: 'Vs expected', fr: 'Écart au prévu' }, 'trending-up'),
     live(FEATURE.PROJECTED_END_ODOMETER, { en: 'Projected end', fr: 'Projection fin' }, 'flag'),
-    live(FEATURE.DAYS_REMAINING, { en: 'Days left', fr: 'Jours restants' }, 'calendar'),
   ];
   if (lease.allowanceUsedPercent !== null) {
     components.push({
@@ -132,6 +170,7 @@ export function buildWidgetContent(gladys, service, { language } = {}) {
       color: usageColor(lease),
     });
   }
+  components.push(leaseChart(service.config, lease));
   components.push({ type: 'status', items: statusItems(lease, language) });
   components.push(readingButton(service));
   // The expected odometer moves ~55 km a day: an hour is fresh enough, and a

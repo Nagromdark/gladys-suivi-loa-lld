@@ -53,7 +53,9 @@ Trois façons, au choix :
   s'affiche sous le bouton.
 - **Tableau de bord** : ajoutez le widget **LOA voiture** ; son bouton
   **Nouveau relevé** ouvre un petit formulaire, prérempli avec le dernier
-  relevé.
+  relevé. Son graphique trace le forfait sur toute la durée du contrat et
+  votre rythme, prolongé jusqu'au compteur projeté : si votre ligne passe
+  au-dessus de celle du forfait, vous roulez trop.
 - **Scène** : action **Enregistrer le compteur de la LOA**. Utile si votre
   voiture est connectée et qu'une autre intégration Gladys lit déjà son
   compteur : une scène quotidienne peut lire cette valeur et la transmettre
