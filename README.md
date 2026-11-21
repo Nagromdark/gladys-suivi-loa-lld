@@ -27,8 +27,6 @@ Documentation utilisateur : [`docs/fr.md`](docs/fr.md) ·
 - **Un widget** `lease_status` : compteur, écart, projection (en direct),
   jauge du forfait consommé, graphique du forfait et de votre rythme sur toute
   la durée du contrat, surcoût projeté, fin de contrat et jours restants.
-- **Une action de scène** `get_summary` qui renvoie les chiffres et une phrase
-  de bilan, pour un message mensuel.
 
 ## Le calcul
 

@@ -180,16 +180,34 @@ test('the widget button records a reading', async (t) => {
   assert.equal(withoutValues.success, false);
 });
 
-test('scene actions record a reading and return the figures as outputs', async (t) => {
-  const { gladys } = await setup(t);
-  const before = await gladys.fake.sceneAction('get_summary', { language: 'fr' });
-  assert.equal(before.success, true);
-  assert.equal(before.data.outputs.odometer, -1);
-  assert.equal(before.data.outputs.expected_odometer, 20010);
-
-  const ack = await gladys.fake.sceneAction('record_reading', { km: 25010, language: 'en' });
+test('the scene action records a reading, also from a rendered variable', async (t) => {
+  const { gladys, feature } = await setup(t);
+  // The km field is a string: the core renders {{…}} into text first.
+  const ack = await gladys.fake.sceneAction('record_reading', { km: '25 010,4', language: 'en' });
   assert.equal(ack.success, true);
+  assert.equal(gladys.fake.lastState(feature(FEATURE.ODOMETER)), 25010);
   assert.equal(ack.data.outputs.projected_overage_km, 15000);
   assert.equal(ack.data.outputs.projected_overage_cost, 1500);
   assert.match(ack.data.outputs.summary, /15,000 km over/);
+
+  // A variable that rendered empty or as text fails the action, loudly.
+  for (const km of ['', 'abc']) {
+    const failed = await gladys.fake.sceneAction('record_reading', { km });
+    assert.equal(failed.success, false, km);
+  }
+});
+
+test('the delta tile is green below the even spread, red well above it', async (t) => {
+  const { gladys } = await setup(t);
+  const deltaTile = async () => {
+    const ack = await gladys.fake.widgetGet('lease_status', { settings: {}, language: 'fr' });
+    return ack.data.content.components.find((c) => c.label?.en === 'Vs expected');
+  };
+  assert.equal((await deltaTile()).color, undefined); // no reading, no colour
+  await gladys.fake.action('record_reading', { km: 19010 }); // 1 000 km below
+  assert.equal((await deltaTile()).color, 'success');
+  await gladys.fake.action('record_reading', { km: 20510 }); // 500 km above
+  assert.equal((await deltaTile()).color, 'warning');
+  await gladys.fake.action('record_reading', { km: 25010 }); // 5 000 km above
+  assert.equal((await deltaTile()).color, 'danger');
 });

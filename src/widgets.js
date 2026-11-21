@@ -29,6 +29,21 @@ function usageColor(lease) {
   return WIDGET_COLORS.SUCCESS;
 }
 
+// Green while at or below the even spread, orange once ahead of it (every km
+// ahead projects an extra cost), red past the same margin as the gauge.
+function deltaColor(config, lease) {
+  if (lease.kmDelta === null) {
+    return undefined;
+  }
+  if (lease.kmDelta <= 0) {
+    return WIDGET_COLORS.SUCCESS;
+  }
+  if (lease.kmDelta <= (config.allowance_km * WARNING_MARGIN_PERCENT) / 100) {
+    return WIDGET_COLORS.WARNING;
+  }
+  return WIDGET_COLORS.DANGER;
+}
+
 function readingButton(service) {
   const { config } = service;
   return {
@@ -147,16 +162,22 @@ export function buildWidgetContent(gladys, service, { language } = {}) {
       ],
     };
   }
-  const live = (key, label, icon) => ({
+  const live = (key, label, icon, color) => ({
     type: 'value',
     label,
     icon,
     device_feature: featureExternalId(gladys, key),
+    ...(color ? { color } : {}),
   });
   const components = [
     { type: 'text', variant: 'heading', text: service.config.vehicle_name },
     live(FEATURE.ODOMETER, { en: 'Odometer', fr: 'Compteur' }, 'activity'),
-    live(FEATURE.KM_DELTA, { en: 'Vs expected', fr: 'Écart au prévu' }, 'trending-up'),
+    live(
+      FEATURE.KM_DELTA,
+      { en: 'Vs expected', fr: 'Écart au prévu' },
+      'trending-up',
+      deltaColor(service.config, lease),
+    ),
     live(FEATURE.PROJECTED_END_ODOMETER, { en: 'Projected end', fr: 'Projection fin' }, 'flag'),
   ];
   if (lease.allowanceUsedPercent !== null) {

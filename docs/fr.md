@@ -59,7 +59,8 @@ Trois façons, au choix :
 - **Scène** : action **Enregistrer le compteur de la LOA**. Utile si votre
   voiture est connectée et qu'une autre intégration Gladys lit déjà son
   compteur : une scène quotidienne peut lire cette valeur et la transmettre
-  ici.
+  ici. Dans le champ **Compteur (km)**, tapez `{{` et choisissez la valeur
+  du compteur de la voiture dans la liste.
 
 Un relevé par semaine ou par mois suffit : la projection se fait sur le
 rythme moyen depuis la livraison. Un relevé inférieur au précédent est
@@ -71,9 +72,6 @@ accepté (correction d'une faute de frappe).
   **Surcoût projeté** supérieur à 0 → envoyer un message.
 - **Rappel de restitution** : déclencheur sur **Jours restants** inférieur à
   90 → message « Pensez à prendre rendez-vous pour l'état des lieux ».
-- **Bilan mensuel** : déclencheur planifié le 1er du mois → action
-  **Obtenir le bilan de la LOA** → envoyer un message contenant la variable
-  **Bilan** de cette action.
 - **Rappel de saisie** : déclencheur planifié chaque dimanche → message
   « Relevez le compteur de la voiture ».
 

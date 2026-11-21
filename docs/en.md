@@ -57,7 +57,8 @@ Three ways:
   are driving too much.
 - **Scene**: the **Record the leased car odometer** action. Handy when your
   car is connected and another Gladys integration already reads its
-  odometer: a daily scene can pass that value on.
+  odometer: a daily scene can pass that value on. In the **Odometer (km)**
+  field, type `{{` and pick the car's odometer value from the list.
 
 A reading a week or a month is enough: the projection uses the average pace
 since the delivery. A reading lower than the previous one is accepted (fixing
@@ -69,9 +70,6 @@ a typo).
   send a message.
 - **Return reminder**: trigger on **Jours restants** below 90 → "book the
   return inspection".
-- **Monthly summary**: scheduled trigger on the 1st of the month → **Get the
-  lease summary** action → send a message containing its **Summary**
-  variable.
 - **Reading reminder**: scheduled trigger every Sunday → "read the car
   odometer".
 

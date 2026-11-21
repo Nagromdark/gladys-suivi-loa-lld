@@ -17,8 +17,10 @@ the notes of the version's GitHub Release.
   extra km and cost, days left).
 - Odometer readings from the Configuration screen, the `lease_status`
   dashboard widget and the `record_reading` scene action.
-- `get_summary` scene action and `show_summary` button: the lease figures and a
-  ready-made sentence, in French or English.
+- `show_summary` button: the lease figures and a ready-made sentence, in
+  French or English.
+- Green, orange or red dot on the widget's "Vs expected" tile, like the
+  allowance gauge.
 - Chart in the `lease_status` widget: the allowance line over the whole
   contract and your own pace, extended to the projected final odometer.
 
@@ -28,5 +30,12 @@ the notes of the version's GitHub Release.
   projected final odometer, projected extra km) showed as unnamed features in
   Gladys: they now use the distance type Gladys knows. Already created device:
   apply the **Update** offered in the integration's Discovery screen.
+- The `record_reading` scene action now accepts a scene variable (`{{`) in
+  its odometer field, e.g. the odometer read by another integration. A scene
+  that already uses it with a typed number must re-enter it.
+
+### Removed
+
+- The `get_summary` scene action.
 
 [Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/commits/HEAD

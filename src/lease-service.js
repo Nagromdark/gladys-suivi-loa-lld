@@ -95,7 +95,16 @@ export function createLeaseService(gladys, { now = () => new Date() } = {}) {
       if (error) {
         throw userError(error);
       }
-      const km = Math.round(Number(String(rawKm ?? '').replace(',', '.')));
+      // A scene passes the rendered text of a variable: "12 345", "12345,6"
+      // or "12345.0" are all fine. Thousands separators (spaces, including the
+      // narrow no-break one) are dropped, a decimal comma becomes a dot.
+      const km = Math.round(
+        Number(
+          String(rawKm ?? '')
+            .replace(/\s/g, '')
+            .replace(',', '.'),
+        ),
+      );
       if (!Number.isFinite(km) || String(rawKm ?? '').trim() === '') {
         throw userError({ en: 'Invalid mileage.', fr: 'Kilométrage invalide.' });
       }

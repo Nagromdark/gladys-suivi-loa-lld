@@ -2,9 +2,9 @@
 // Scene actions (Gladys 5.1+), declared in the manifest `scene_actions`.
 //
 //   - record_reading: feed the odometer from a scene, e.g. the value another
-//     integration reads from a connected car, every night;
-//   - get_summary: the lease figures as scene variables plus a ready-made
-//     sentence, e.g. for a monthly Telegram recap.
+//     integration reads from a connected car, every night. Its `km` field is a
+//     `string`: the core only substitutes scene variables ({{…}}) in string
+//     fields, and recordReading parses the rendered text.
 //
 // Alerts need no scene TRIGGER of ours: the figures are device features, and
 // the core's device-value trigger already covers "projected extra cost above
@@ -41,15 +41,6 @@ export function createSceneActions(service) {
     async record_reading(fields) {
       logger.info(`Scene action record_reading <- ${fields.km}`);
       const lease = await service.recordReading(fields.km);
-      return outputs(lease, fields.language);
-    },
-
-    async get_summary(fields) {
-      const lease = service.lease();
-      if (!lease) {
-        const [error] = service.errors();
-        throw new Error(`${error.fr} / ${error.en}`);
-      }
       return outputs(lease, fields.language);
     },
   };
