@@ -74,7 +74,9 @@ export function buildDevice(gladys, config) {
       name,
       feature(key),
       CATEGORIES.DISTANCE_SENSOR,
-      TYPES.SENSOR.INTEGER,
+      // Gladys only knows the `decimal` type for this category: `integer`
+      // shows as an unnamed feature. The published figures stay whole km.
+      TYPES.SENSOR.DECIMAL,
       UNITS.KM,
       min,
       MAX_KM,

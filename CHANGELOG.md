@@ -22,4 +22,11 @@ the notes of the version's GitHub Release.
 - Chart in the `lease_status` widget: the allowance line over the whole
   contract and your own pace, extended to the projected final odometer.
 
+### Fixed
+
+- The six distance figures (expected odometer, delta, km left, monthly budget,
+  projected final odometer, projected extra km) showed as unnamed features in
+  Gladys: they now use the distance type Gladys knows. Already created device:
+  apply the **Update** offered in the integration's Discovery screen.
+
 [Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/commits/HEAD

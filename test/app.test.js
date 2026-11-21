@@ -35,6 +35,14 @@ test('publishes the vehicle device and the time-based figures on connection', as
   const [device] = gladys.fake.discoveredDevices;
   assert.equal(device.name, 'Peugeot 308 (LOA)');
   assert.equal(device.features.length, 9);
+  // The category/type pairs the Gladys UI has a name for: an unknown pair
+  // shows as an unnamed feature (distance-sensor only knows `decimal`).
+  assert.deepEqual([...new Set(device.features.map((f) => `${f.category}/${f.type}`))].sort(), [
+    'currency/decimal',
+    'distance-sensor/decimal',
+    'duration/integer',
+    'electrical-vehicle-state/odometer',
+  ]);
   assert.equal(gladys.fake.lastState(feature(FEATURE.EXPECTED_ODOMETER)), 20010);
   assert.equal(gladys.fake.lastState(feature(FEATURE.DAYS_REMAINING)), 730);
   // Nothing published for the figures that need a reading.
