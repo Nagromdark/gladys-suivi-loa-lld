@@ -23,6 +23,8 @@ the notes of the version's GitHub Release.
   "Allowance used" row, now shown under the chart instead of a gauge tile.
 - Chart in the `lease_status` widget: the allowance line over the whole
   contract and your own pace, extended to the projected final odometer.
+  Both are drawn straight (one point per contract month): with two points
+  only, Gladys smoothed them into an S.
 
 ### Fixed
 

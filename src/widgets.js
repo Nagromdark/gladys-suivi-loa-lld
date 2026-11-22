@@ -11,6 +11,7 @@ import { createLogger, WIDGET_COLORS } from '@gladysassistant/integration-sdk';
 import { WIDGET_KEY } from './lease-service.js';
 import { FEATURE, featureExternalId } from './vehicle.js';
 import { formatDate, formatEuro, formatKm, formatPercent } from './format.js';
+import { addMonths } from './lease.js';
 
 const logger = createLogger({ name: 'widgets' });
 
@@ -129,25 +130,50 @@ function statusItems(lease, language) {
 // the end, and the car's own line (delivery -> last reading -> projected end).
 // Inline points rather than the features' history: the chart must span the
 // whole contract, future included, and the core's intervals stop at one year.
+//
+// Both are straight lines (the projection extends the pace measured at the
+// reading), but Gladys draws its line charts smoothed: between two points
+// only, the curve bends into an S. One point per contract month keeps them
+// straight; 120 months at most, well under the 300 points of a series.
 function leaseChart(config, lease) {
   const point = (date, km) => ({ t: date.toISOString(), v: Math.round(km) });
+  // The straight line through (from, fromKm) and (to, toKm), sampled on the
+  // contract months up to `last`, plus the given dates.
+  const line = (from, fromKm, to, toKm, last, extraDates = []) => {
+    const kmAt = (date) => fromKm + ((toKm - fromKm) * (date - from)) / (to - from);
+    const dates = [...extraDates, last];
+    for (let month = 0; month <= config.duration_months; month += 1) {
+      const date = addMonths(lease.start, month);
+      if (date < last) {
+        dates.push(date);
+      }
+    }
+    return [...new Map(dates.map((date) => [date.getTime(), date])).values()]
+      .sort((a, b) => a - b)
+      .map((date) => point(date, kmAt(date)));
+  };
   const series = [
     {
       name: { en: 'Allowance', fr: 'Forfait' },
-      points: [
-        point(lease.start, config.start_km),
-        point(lease.end, config.start_km + config.allowance_km),
-      ],
+      points: line(
+        lease.start,
+        config.start_km,
+        lease.end,
+        config.start_km + config.allowance_km,
+        lease.end,
+      ),
     },
   ];
   // A reading on the delivery day would draw a vertical segment: no car line.
   if (lease.reading && lease.reading.at > lease.start) {
-    const points = [point(lease.start, config.start_km), point(lease.reading.at, lease.odometer)];
-    // A reading taken after the end already is the final mileage.
-    if (lease.projectedEndOdometer !== null && lease.reading.at < lease.end) {
-      points.push(point(lease.end, lease.projectedEndOdometer));
-    }
-    series.push({ name: { en: 'Your pace', fr: 'Votre rythme' }, points });
+    const { at } = lease.reading;
+    // Up to the end with a projection; a reading too early to project, or
+    // taken after the end (the final mileage), stops the line at the reading.
+    const last = lease.projectedEndOdometer !== null && at < lease.end ? lease.end : at;
+    series.push({
+      name: { en: 'Your pace', fr: 'Votre rythme' },
+      points: line(lease.start, config.start_km, at, lease.odometer, last, [at]),
+    });
   }
   return {
     type: 'chart',

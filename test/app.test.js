@@ -146,24 +146,27 @@ test('the widget chart draws the allowance and the pace over the whole contract'
     const ack = await gladys.fake.widgetGet('lease_status', { settings: {}, language: 'fr' });
     return ack.data.content.components.find((c) => c.type === 'chart');
   };
-  // Without a reading: only the allowance line.
-  assert.deepEqual((await chartOf()).series, [
-    {
-      name: { en: 'Allowance', fr: 'Forfait' },
-      points: [
-        { t: '2025-01-01T00:00:00.000Z', v: 10 },
-        { t: '2028-01-01T00:00:00.000Z', v: 60010 },
-      ],
-    },
-  ]);
+  // Without a reading: only the allowance line, one point per contract month
+  // (Gladys smooths its curves: two points alone would draw an S).
+  const [allowance, ...others] = (await chartOf()).series;
+  assert.deepEqual(others, []);
+  assert.equal(allowance.name.fr, 'Forfait');
+  assert.equal(allowance.points.length, 37);
+  assert.deepEqual(allowance.points[0], { t: '2025-01-01T00:00:00.000Z', v: 10 });
+  assert.deepEqual(allowance.points[12], { t: '2026-01-01T00:00:00.000Z', v: 20010 });
+  assert.deepEqual(allowance.points[36], { t: '2028-01-01T00:00:00.000Z', v: 60010 });
+
   await gladys.fake.action('record_reading', { km: 25010 });
   const [, pace] = (await chartOf()).series;
-  // 25 000 km in 365 of 1095 days -> 75 000 km driven at the end.
-  assert.deepEqual(pace.points, [
-    { t: '2025-01-01T00:00:00.000Z', v: 10 },
-    { t: NOW.toISOString(), v: 25010 },
-    { t: '2028-01-01T00:00:00.000Z', v: 75010 },
-  ]);
+  // 25 000 km in 365 of 1095 days -> 75 000 km driven at the end, on the
+  // same straight line through the reading.
+  assert.equal(pace.points.length, 37);
+  assert.deepEqual(pace.points[0], { t: '2025-01-01T00:00:00.000Z', v: 10 });
+  assert.deepEqual(pace.points[12], { t: NOW.toISOString(), v: 25010 });
+  assert.deepEqual(pace.points[36], { t: '2028-01-01T00:00:00.000Z', v: 75010 });
+  // Strictly increasing dates: a straight, readable line.
+  const times = pace.points.map((p) => Date.parse(p.t));
+  assert.ok(times.every((time, index) => index === 0 || time > times[index - 1]));
 });
 
 test('the widget content stays valid while the contract is not configured', async (t) => {
