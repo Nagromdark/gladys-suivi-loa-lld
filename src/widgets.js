@@ -3,14 +3,14 @@
 // "New reading" button whose form records the odometer.
 //
 // The tiles bound to device features are LIVE (they follow the published
-// states); the gauge and the status rows are computed here and served from the
+// states); the colours and the status rows are computed here and served from the
 // core cache until the TTL or a requestWidgetRefresh nudge.
 // -----------------------------------------------------------------------------
 
 import { createLogger, WIDGET_COLORS } from '@gladysassistant/integration-sdk';
 import { WIDGET_KEY } from './lease-service.js';
 import { FEATURE, featureExternalId } from './vehicle.js';
-import { formatDate, formatEuro, formatKm } from './format.js';
+import { formatDate, formatEuro, formatKm, formatPercent } from './format.js';
 
 const logger = createLogger({ name: 'widgets' });
 
@@ -30,7 +30,7 @@ function usageColor(lease) {
 }
 
 // Green while at or below the even spread, orange once ahead of it (every km
-// ahead projects an extra cost), red past the same margin as the gauge.
+// ahead projects an extra cost), red past the same margin as the allowance row.
 function deltaColor(config, lease) {
   if (lease.kmDelta === null) {
     return undefined;
@@ -70,14 +70,23 @@ function readingButton(service) {
 }
 
 function statusItems(lease, language) {
-  const items = [
-    {
-      label: { en: 'Expected odometer today', fr: "Compteur prévu aujourd'hui" },
-      icon: 'target',
-      value: formatKm(lease.expectedOdometer, language),
-      color: WIDGET_COLORS.NEUTRAL,
-    },
-  ];
+  const items = [];
+  // A row rather than a gauge tile: the chart already shows the same story,
+  // and a row reads the exact figure.
+  if (lease.allowanceUsedPercent !== null) {
+    items.push({
+      label: { en: 'Allowance used', fr: 'Forfait consommé' },
+      icon: 'pie-chart',
+      value: formatPercent(lease.allowanceUsedPercent, language),
+      color: usageColor(lease),
+    });
+  }
+  items.push({
+    label: { en: 'Expected odometer today', fr: "Compteur prévu aujourd'hui" },
+    icon: 'target',
+    value: formatKm(lease.expectedOdometer, language),
+    color: WIDGET_COLORS.NEUTRAL,
+  });
   if (lease.monthlyBudgetKm !== null) {
     items.push({
       label: { en: 'Budget per month', fr: 'Budget par mois' },
@@ -180,17 +189,6 @@ export function buildWidgetContent(gladys, service, { language } = {}) {
     ),
     live(FEATURE.PROJECTED_END_ODOMETER, { en: 'Projected end', fr: 'Projection fin' }, 'flag'),
   ];
-  if (lease.allowanceUsedPercent !== null) {
-    components.push({
-      type: 'gauge',
-      label: { en: 'Allowance used', fr: 'Forfait consommé' },
-      value: Math.max(0, Math.min(100, lease.allowanceUsedPercent)),
-      min: 0,
-      max: 100,
-      unit: '%',
-      color: usageColor(lease),
-    });
-  }
   components.push(leaseChart(service.config, lease));
   components.push({ type: 'status', items: statusItems(lease, language) });
   components.push(readingButton(service));

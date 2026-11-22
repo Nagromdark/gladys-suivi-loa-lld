@@ -128,7 +128,14 @@ test('the widget content is valid, before and after a reading', async (t) => {
   const ack = await gladys.fake.widgetGet('lease_status', { settings: {}, language: 'fr' });
   const { components } = ack.data.content;
   assert.deepEqual(validateWidgetContent(ack.data.content), []);
-  assert.equal(components.find((c) => c.type === 'gauge').color, 'warning');
+  assert.equal(
+    components.find((c) => c.type === 'gauge'),
+    undefined,
+  );
+  const [allowanceRow] = components.find((c) => c.type === 'status').items;
+  assert.equal(allowanceRow.label.fr, 'Forfait consommé');
+  assert.equal(allowanceRow.value, '41,7\u00a0%');
+  assert.equal(allowanceRow.color, 'warning');
   const button = components.find((c) => c.type === 'button');
   assert.equal(button.action.fields[0].default, 25010);
 });

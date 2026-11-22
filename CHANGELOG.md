@@ -20,7 +20,7 @@ the notes of the version's GitHub Release.
 - `show_summary` button: the lease figures and a ready-made sentence, in
   French or English.
 - The widget's "Vs expected" tile turns green, orange or red, like the
-  allowance gauge.
+  "Allowance used" row, now shown under the chart instead of a gauge tile.
 - Chart in the `lease_status` widget: the allowance line over the whole
   contract and your own pace, extended to the projected final odometer.
 

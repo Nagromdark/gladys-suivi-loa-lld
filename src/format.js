@@ -19,6 +19,13 @@ export function formatSignedKm(value, language) {
   return `${value > 0 ? '+' : ''}${formatKm(value, language)}`;
 }
 
+export function formatPercent(value, language) {
+  return new Intl.NumberFormat(locale(language), {
+    style: 'percent',
+    maximumFractionDigits: 1,
+  }).format(value / 100);
+}
+
 export function formatEuro(value, language) {
   return new Intl.NumberFormat(locale(language), {
     style: 'currency',

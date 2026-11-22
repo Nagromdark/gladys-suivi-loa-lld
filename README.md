@@ -25,8 +25,8 @@ Documentation utilisateur : [`docs/fr.md`](docs/fr.md) ·
   (pour relayer le compteur d'une voiture connectée lu par une autre
   intégration).
 - **Un widget** `lease_status` : compteur, écart, projection (en direct),
-  jauge du forfait consommé, graphique du forfait et de votre rythme sur toute
-  la durée du contrat, surcoût projeté, fin de contrat et jours restants.
+  graphique du forfait et de votre rythme sur toute la durée du contrat, puis
+  forfait consommé, surcoût projeté, fin de contrat et jours restants.
 
 ## Le calcul
 
