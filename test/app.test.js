@@ -183,12 +183,11 @@ test('the widget button records a reading', async (t) => {
 test('the scene action records a reading, also from a rendered variable', async (t) => {
   const { gladys, feature } = await setup(t);
   // The km field is a string: the core renders {{…}} into text first.
-  const ack = await gladys.fake.sceneAction('record_reading', { km: '25 010,4', language: 'en' });
+  const ack = await gladys.fake.sceneAction('record_reading', { km: '25 010,4' });
   assert.equal(ack.success, true);
   assert.equal(gladys.fake.lastState(feature(FEATURE.ODOMETER)), 25010);
   assert.equal(ack.data.outputs.projected_overage_km, 15000);
   assert.equal(ack.data.outputs.projected_overage_cost, 1500);
-  assert.match(ack.data.outputs.summary, /15,000 km over/);
 
   // A variable that rendered empty or as text fails the action, loudly.
   for (const km of ['', 'abc']) {

@@ -13,7 +13,6 @@
 // -----------------------------------------------------------------------------
 
 import { createLogger } from '@gladysassistant/integration-sdk';
-import { summarize } from './format.js';
 
 const logger = createLogger({ name: 'scenes' });
 
@@ -21,7 +20,7 @@ const logger = createLogger({ name: 'scenes' });
 // so a scene condition on it never compares against an empty variable.
 const orMinusOne = (value) => (value === null || value === undefined ? -1 : value);
 
-function outputs(lease, language = 'fr') {
+function outputs(lease) {
   return {
     odometer: orMinusOne(lease.odometer),
     expected_odometer: lease.expectedOdometer,
@@ -32,7 +31,6 @@ function outputs(lease, language = 'fr') {
     projected_overage_km: orMinusOne(lease.projectedOverageKm),
     projected_overage_cost: orMinusOne(lease.projectedOverageCost),
     days_remaining: lease.daysRemaining,
-    summary: summarize(lease)[language === 'en' ? 'en' : 'fr'],
   };
 }
 
@@ -41,7 +39,7 @@ export function createSceneActions(service) {
     async record_reading(fields) {
       logger.info(`Scene action record_reading <- ${fields.km}`);
       const lease = await service.recordReading(fields.km);
-      return outputs(lease, fields.language);
+      return outputs(lease);
     },
   };
 }

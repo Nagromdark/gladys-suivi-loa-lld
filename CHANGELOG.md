@@ -19,7 +19,7 @@ the notes of the version's GitHub Release.
   dashboard widget and the `record_reading` scene action.
 - `show_summary` button: the lease figures and a ready-made sentence, in
   French or English.
-- Green, orange or red dot on the widget's "Vs expected" tile, like the
+- The widget's "Vs expected" tile turns green, orange or red, like the
   allowance gauge.
 - Chart in the `lease_status` widget: the allowance line over the whole
   contract and your own pace, extended to the projected final odometer.
@@ -36,6 +36,7 @@ the notes of the version's GitHub Release.
 
 ### Removed
 
-- The `get_summary` scene action.
+- The `get_summary` scene action, and the summary language field and
+  `summary` output of the `record_reading` scene action.
 
 [Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/commits/HEAD

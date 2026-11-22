@@ -130,17 +130,6 @@
             "fr": "Un nombre, ou tapez {{ pour insérer le compteur lu par une autre intégration (par exemple votre voiture connectée)."
           },
           "required": true
-        },
-        {
-          "key": "language",
-          "type": "select",
-          "label": { "en": "Summary language", "fr": "Langue du bilan" },
-          "required": false,
-          "default": "fr",
-          "options": [
-            { "value": "fr", "label": { "en": "French", "fr": "Français" } },
-            { "value": "en", "label": { "en": "English", "fr": "Anglais" } }
-          ]
         }
       ],
       "outputs": [
@@ -188,11 +177,6 @@
           "key": "days_remaining",
           "type": "number",
           "label": { "en": "Days left", "fr": "Jours restants" }
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "label": { "en": "Summary", "fr": "Bilan" }
         }
       ]
     }
