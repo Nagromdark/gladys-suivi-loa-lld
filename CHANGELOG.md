@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-22
+
 ### Added
 
 - First version: follow a leased car (LOA / LLD) against its mileage
@@ -30,4 +32,5 @@ the notes of the version's GitHub Release.
 - **Show the summary** button on the Configuration screen: the lease figures
   and a ready-made sentence, in French or English.
 
-[Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/commits/HEAD
+[Unreleased]: https://github.com/Nagromdark/gladys-suivi-loa-lld/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Nagromdark/gladys-suivi-loa-lld/releases/tag/v1.0.0
