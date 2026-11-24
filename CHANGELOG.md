@@ -10,6 +10,12 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- Declared `transports: ["local"]`: everything is computed on the machine from
+  the mileage you enter, and the Local filter of the Gladys catalog now finds
+  the integration.
+
 ## [1.0.0] - 2026-11-22
 
 ### Added
