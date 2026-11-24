@@ -81,6 +81,10 @@ test('every widgets key has a handler, and vice versa', () => {
   assert.deepEqual(keysOf(manifest.widgets).sort(), Object.keys(widgets).sort());
 });
 
+test('the manifest declares the local transport: no online service is called', () => {
+  assert.deepEqual(manifest.transports, ['local']);
+});
+
 test('capability fields and categories require Gladys >= 5.1.0', () => {
   assert.ok(manifest.categories.length >= 1 && manifest.categories.length <= 3);
   assert.ok(isAtLeast(minGladysVersion(), [5, 1, 0]), manifest.gladys_version);
